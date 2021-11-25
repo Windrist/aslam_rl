@@ -1,0 +1,17 @@
+<launch>
+    <arg name="stage" value="1"/>
+
+    <!-- Run Environment by Gazebo -->
+    <include file="$(find aslam_rl)/launch/turtlebot3_stage_$(arg stage).launch" />
+
+    <!-- Implement Train Node for Training -->
+    <node pkg="aslam_rl" type="training.py" name="Learning" output="screen">
+        <param name="state" value="$(arg stage)"/>
+        <param name="algorithm" value="PPO"/>
+        <param name="env_name" value="ContinuousObs"/>
+        <param name="n_actions" value="Maximum"/>
+        <param name="num_steps" value="500000"/>
+        <param name="device" value="cuda"/>
+        <param name="old_model" value="False"/>
+    </node>
+</launch>

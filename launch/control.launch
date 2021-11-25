@@ -1,0 +1,6 @@
+<launch>
+    <!-- Run RL Control Node -->
+    <node pkg="aslam_rl" type="control.py" name="Driving" output="screen">
+        <param name="algorithm" value="PPO"/>
+    </node>
+</launch>
