@@ -13,7 +13,7 @@
 class rdm{
     int i;
     public:
-    rdm();
+        rdm();
     float randomize();
 };
 

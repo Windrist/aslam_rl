@@ -43,10 +43,10 @@ class ContinuousTurtleGym(gym.Env):
 		metadata = {'render.modes': ['console']}
 		print("Initialising Turtlebot 3 Continuous Gym Environment...")
 		self.action_space = spaces.Box(np.array([-MAX_SPEED, -MAX_STEER]), np.array([MAX_SPEED, MAX_STEER]), dtype = np.float16) # max rotational velocity of burger is 2.84 rad/s
-		# low = np.concatenate((np.array([-1., -1., -np.pi]), np.zeros(36)))
-		# high = np.concatenate((np.array([1., 1., np.pi]), np.ones(36)*5.))
-		low = np.zeros(36)
-		high = np.ones(36)*5.
+		low = np.concatenate((np.array([-1., -1., -4.]), np.zeros(36)))
+		high = np.concatenate((np.array([1., 1., 4.]), np.ones(36)*5.))
+		# low = np.zeros(36)
+		# high = np.ones(36)*5.
 		self.observation_space = spaces.Box(low, high, dtype=np.float16)
 		self.target = [0., 0., 0.]
 		self.ep_steps = 0
@@ -184,8 +184,8 @@ class ContinuousTurtleGym(gym.Env):
 		time.sleep(0.5)
 		self.respawnGoalModel()
 
-		# return np.concatenate((np.array(obs), self.sector_scan))
-		return self.sector_scan
+		return np.concatenate((np.array(obs), self.sector_scan))
+		# return self.sector_scan
 
 	def get_distance(self, x1, x2):
 		return math.sqrt((x1[0] - x2[0])**2 + (x1[1] - x2[1])**2)
@@ -251,8 +251,8 @@ class ContinuousTurtleGym(gym.Env):
 		obs = [(self.target[0] - self.pose[0])/GRID, (self.target[1] - self.pose[1])/GRID, head_to_target - self.pose[2]]
 		obs = [round(x, 2) for x in obs]
 
-		# return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
-		return self.sector_scan, reward, done, info
+		return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
+		# return self.sector_scan, reward, done, info
 
 	def stop_bot(self):
 		msg = Twist()
@@ -327,10 +327,10 @@ class DiscreteTurtleGym(gym.Env):
 				20: [-MAX_SPEED, -MAX_STEER], 21: [-MAX_SPEED, -MAX_STEER/2], 22: [-MAX_SPEED, 0.], 23: [-MAX_SPEED, MAX_STEER/2], 24: [-MAX_SPEED, MAX_STEER]
 			}
 
-		# low = np.concatenate((np.array([-1., -1., -np.pi]), np.zeros(36)))
-		# high = np.concatenate((np.array([1., 1., np.pi]), np.ones(36)*5.))
-		low = np.zeros(36)
-		high = np.ones(36)*5.
+		low = np.concatenate((np.array([-1., -1., -4.]), np.zeros(36)))
+		high = np.concatenate((np.array([1., 1., 4.]), np.ones(36)*5.))
+		# low = np.zeros(36)
+		# high = np.ones(36)*5.
 		self.observation_space = spaces.Box(low, high, dtype=np.float16)
 		self.target = [0., 0., 0.]
 		self.ep_steps = 0
@@ -468,8 +468,8 @@ class DiscreteTurtleGym(gym.Env):
 		time.sleep(0.5)
 		self.respawnGoalModel()
 
-		# return np.concatenate((np.array(obs), self.sector_scan))
-		return self.sector_scan
+		return np.concatenate((np.array(obs), self.sector_scan))
+		# return self.sector_scan
 
 	def get_distance(self, x1, x2):
 		return math.sqrt((x1[0] - x2[0])**2 + (x1[1] - x2[1])**2)
@@ -537,8 +537,8 @@ class DiscreteTurtleGym(gym.Env):
 		obs = [(self.target[0] - self.pose[0])/GRID, (self.target[1] - self.pose[1])/GRID, head_to_target - self.pose[2]]
 		obs = [round(x, 2) for x in obs]
 
-		# return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
-		return self.sector_scan, reward, done, info
+		return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
+		# return self.sector_scan, reward, done, info
 
 	def stop_bot(self):
 		msg = Twist()
@@ -591,10 +591,10 @@ class ContinuousTurtleObsGym(gym.Env):
 		metadata = {'render.modes': ['console']}
 		print("Initialising Turtlebot 3 Continuous Gym Obstacle Environment...")
 		self.action_space = spaces.Box(np.array([0., -MAX_STEER]), np.array([MAX_SPEED, MAX_STEER]), dtype = np.float16) # max rotational velocity of burger is 2.84 rad/s
-		# low = np.concatenate((np.array([-1., -1., -np.pi]), np.zeros(36)))
-		# high = np.concatenate((np.array([1., 1., np.pi]), np.ones(36)*5.))
-		low = np.zeros(36)
-		high = np.ones(36)*5.
+		low = np.concatenate((np.array([-1., -1., -4.]), np.zeros(36)))
+		high = np.concatenate((np.array([1., 1., 4.]), np.ones(36)*5.))
+		# low = np.zeros(36)
+		# high = np.ones(36)*5.
 		self.observation_space = spaces.Box(low, high, dtype=np.float16)
 		self.target = [0., 0., 0.]
 		self.ep_steps = 0
@@ -732,8 +732,8 @@ class ContinuousTurtleObsGym(gym.Env):
 		time.sleep(0.5)
 		self.respawnGoalModel()
 
-		# return np.concatenate((np.array(obs), self.sector_scan))
-		return self.sector_scan
+		return np.concatenate((np.array(obs), self.sector_scan))
+		# return self.sector_scan
 
 	def get_distance(self, x1, x2):
 		return math.sqrt((x1[0] - x2[0])**2 + (x1[1] - x2[1])**2)
@@ -799,8 +799,8 @@ class ContinuousTurtleObsGym(gym.Env):
 		obs = [(self.target[0] - self.pose[0])/GRID, (self.target[1] - self.pose[1])/GRID, head_to_target - self.pose[2]]
 		obs = [round(x, 2) for x in obs]
 
-		# return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
-		return self.sector_scan, reward, done, info
+		return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
+		# return self.sector_scan, reward, done, info
 
 	def stop_bot(self):
 		msg = Twist()
@@ -871,10 +871,10 @@ class DiscreteTurtleObsGym(gym.Env):
 				10: [MAX_SPEED, -MAX_STEER], 11: [MAX_SPEED, -MAX_STEER/2], 12: [MAX_SPEED, 0.], 13: [MAX_SPEED, MAX_STEER/2], 14: [MAX_SPEED, MAX_STEER]
 			}
 
-		# low = np.concatenate((np.array([-1., -1., -np.pi]), np.zeros(36)))
-		# high = np.concatenate((np.array([1., 1., np.pi]), np.ones(36)*5.))
-		low = np.zeros(36)
-		high = np.ones(36)*5.
+		low = np.concatenate((np.array([-1., -1., -4.]), np.zeros(36)))
+		high = np.concatenate((np.array([1., 1., 4.]), np.ones(36)*5.))
+		# low = np.zeros(36)
+		# high = np.ones(36)*5.
 		self.observation_space = spaces.Box(low, high, dtype=np.float16)
 		self.target = [0., 0., 0.]
 		self.ep_steps = 0
@@ -1012,8 +1012,8 @@ class DiscreteTurtleObsGym(gym.Env):
 		time.sleep(0.5)
 		self.respawnGoalModel()
 
-		# return np.concatenate((np.array(obs), self.sector_scan))
-		return self.sector_scan
+		return np.concatenate((np.array(obs), self.sector_scan))
+		# return self.sector_scan
 
 	def get_distance(self, x1, x2):
 		return math.sqrt((x1[0] - x2[0])**2 + (x1[1] - x2[1])**2)
@@ -1081,8 +1081,8 @@ class DiscreteTurtleObsGym(gym.Env):
 		obs = [(self.target[0] - self.pose[0])/GRID, (self.target[1] - self.pose[1])/GRID, head_to_target - self.pose[2]]
 		obs = [round(x, 2) for x in obs]
 
-		# return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
-		return self.sector_scan, reward, done, info
+		return np.concatenate((np.array(obs), self.sector_scan)), reward, done, info
+		# return self.sector_scan, reward, done, info
 
 	def stop_bot(self):
 		msg = Twist()

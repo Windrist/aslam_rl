@@ -30,6 +30,7 @@ class Control(gym.Env):
 
 		# Get Parameters for Configurations
 		self.algorithm = rospy.get_param('~algorithm', 'DQN') # Algorithm for Training (Include: DQN, DDPG, PPO, SAC, TD3)
+		self.device = rospy.get_param('~device', 'cpu') # Run on cpu or cuda (Include: cpu or cuda)
 
 		self.target = [0., 0., 0.]
 		self.done = False
@@ -55,15 +56,15 @@ class Control(gym.Env):
 		modelPath = rospack.get_path('aslam_rl') + '/scripts/sbmodels/' + self.algorithm + '_turle_1'
 		
 		if self.algorithm == "DQN":
-			self.model = DQN.load(modelPath)
+			self.model = DQN.load(modelPath, device=self.device)
 		elif self.algorithm == "DDPG":
-			self.model = DDPG.load(modelPath)
+			self.model = DDPG.load(modelPath, device=self.device)
 		elif self.algorithm == "PPO":
-			self.model = PPO.load(modelPath)
+			self.model = PPO.load(modelPath, device=self.device)
 		elif self.algorithm == "SAC":
-			self.model = SAC.load(modelPath)
+			self.model = SAC.load(modelPath, device=self.device)
 		elif self.algorithm == "TD3":
-			self.model = TD3.load(modelPath)
+			self.model = TD3.load(modelPath, device=self.device)
 
 	def pose_callback(self, pose_data):
 		# ROS Callback function for the /odom topic

@@ -24,7 +24,7 @@ Panels:
     Property Tree Widget:
       Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 427
+    Tree Height: 409
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -74,25 +74,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_rgb_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        camera_rgb_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        caster_back_left_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        caster_back_right_link:
+        caster_back_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -122,6 +104,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+      Marker Alpha: 1
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -146,9 +129,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 11799
       Min Color: 0; 0; 0
-      Min Intensity: 0
       Name: LaserScan
       Position Transformer: XYZ
       Queue Size: 10
@@ -212,6 +193,7 @@ Visualization Manager:
       Color: 25; 255; 0
       Enabled: false
       Name: Polygon
+      Queue Size: 10
       Topic: /move_base/global_costmap/footprint
       Unreliable: false
       Value: false
@@ -242,6 +224,7 @@ Visualization Manager:
         Z: 0
       Pose Color: 255; 85; 255
       Pose Style: None
+      Queue Size: 10
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
@@ -257,6 +240,7 @@ Visualization Manager:
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: Pose
+      Queue Size: 10
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
@@ -280,6 +264,7 @@ Visualization Manager:
         Z: 0
       Pose Color: 255; 85; 255
       Pose Style: None
+      Queue Size: 10
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
@@ -303,10 +288,11 @@ Visualization Manager:
         Z: 0
       Pose Color: 255; 85; 255
       Pose Style: None
+      Queue Size: 10
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /move_base/NavfnROS/plan
+      Topic: /move_base/DWAPlannerROS/global_plan
       Unreliable: false
       Value: true
     - Class: rviz/Marker
@@ -314,7 +300,7 @@ Visualization Manager:
       Marker Topic: /frontiers
       Name: Marker
       Namespaces:
-        {}
+        markers2: true
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -323,6 +309,7 @@ Visualization Manager:
       Enabled: true
       History Length: 1
       Name: PointStamped
+      Queue Size: 10
       Radius: 0.20000000298023224
       Topic: /clicked_point
       Unreliable: false
@@ -332,7 +319,7 @@ Visualization Manager:
       Marker Topic: /centroids
       Name: Marker
       Namespaces:
-        {}
+        markers3: true
       Queue Size: 100
       Value: true
     - Class: rviz/Marker
@@ -371,12 +358,13 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 27.67487144470215
+      Distance: 12.852323532104492
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.7853981852531433
       Focal Point:
         X: -2.467195987701416
         Y: 1.2694282531738281
@@ -388,7 +376,6 @@ Visualization Manager:
       Near Clip Distance: 0.009999999776482582
       Pitch: 1.5697963237762451
       Target Frame: map
-      Value: Orbit (rviz)
       Yaw: 1.5699979066848755
     Saved: ~
 Window Geometry:
@@ -396,12 +383,12 @@ Window Geometry:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 974
+  Height: 948
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001b600000330fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000003d000001900000001600fffffffb0000000c00430061006d006500720061010000003d000000fc0000001600fffffffb000000100044006900730070006c006100790073010000013f0000022e000000c900ffffff000000010000010f0000032efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d0000032e000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000780000000fcfc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d0065010000000000000780000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000005c40000033000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001b600000316fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000003d000001900000001600fffffffb0000000c00430061006d006500720061010000003d000000f40000001600fffffffb000000100044006900730070006c00610079007301000001370000021c000000c900ffffff000000010000010f0000032efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d0000032e000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000780000000fcfc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d0065010000000000000780000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000005c40000031600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:

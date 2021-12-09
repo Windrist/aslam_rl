@@ -1,72 +1,70 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import math
-import time
-import itertools
-import argparse
-import datetime
-import torch
-import sys
+import numpy as np
 import rospy
 import rospkg
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import CompressedImage, Image
-import numpy as np
 from tb3env import ContinuousTurtleGym, DiscreteTurtleGym, ContinuousTurtleObsGym, DiscreteTurtleObsGym
-from std_srvs.srv import Empty
-from stable_baselines3 import PPO
-# from stable_baselines.sac.policies import MlpPolicy
-# from stable_baselines import SAC
-# from stable_baselines.deepq.policies import MlpPolicy
-# from stable_baselines import DQN
-# from stable_baselines.deepq.policies import FeedForwardPolicy, register_policy
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-import tensorflow as tf
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+from stable_baselines3 import DQN, DDPG, PPO, SAC, TD3
 
-parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
-parser.add_argument('--env-name', default="ContinuousTurtleObsGym",
-          help='Turtlebot Gazebo Gym environment (default: DiscreteTurtleGym)')
-parser.add_argument('--n-actions', type=int, default=15, metavar='N',
-          help='number of discrete actions 4 or 15 (default: 5)')
-args = parser.parse_args()
 
-def evaluate(env) :
-	rospack = rospkg.RosPack()
-	modelPath = rospack.get_path('aslam_rl') + '/scripts/sbmodels/' + 'PPO' + '_turle_1'
-	model = PPO.load(modelPath)
-	episode_rewards = []
-	for _ in range(50) :
-		done = False
-		obs = env.reset()
-		ep_reward = 0
-		while not done:
-			action, _ = model.predict(obs)
-			obs, reward, done, _ = env.step(action)
-			# print(obs)
-			# rospy.sleep(0.05)
-			ep_reward += reward
-			if done :
-				episode_rewards.append(ep_reward)
-				continue
-	mean_10ep_reward = round(np.mean(episode_rewards[-10:]), 1)
-	print("Mean reward:", mean_10ep_reward, "Num episodes:", len(episode_rewards))
+def evaluate(env, algorithm, device, env_name):
+    rospack = rospkg.RosPack()
+    modelPath = rospack.get_path('aslam_rl') + '/scripts/sbmodels/' + algorithm + '_' + env_name
+    
+    if algorithm == "DQN":
+        model = DQN.load(modelPath, device=device)
+    elif algorithm == "DDPG":
+        model = DDPG.load(modelPath, device=device)
+    elif algorithm == "PPO":
+        model = PPO.load(modelPath, device=device)
+    elif algorithm == "SAC":
+        model = SAC.load(modelPath, device=device)
+    elif algorithm == "TD3":
+        model = TD3.load(modelPath, device=device)
+    
+    episode_rewards = []
+    for _ in range(50):
+        done = False
+        obs = env.reset()
+        ep_reward = 0
+        while not done:
+            action, _ = model.predict(obs)
+            obs, reward, done, _ = env.step(action)
+            # print(obs)
+            # rospy.sleep(0.05)
+            ep_reward += reward
+            if done:
+                episode_rewards.append(ep_reward)
+                continue
+    mean_10ep_reward = round(np.mean(episode_rewards[-10:]), 1)
+    print("Mean reward:", mean_10ep_reward, "Num episodes:", len(episode_rewards))
+
 
 if __name__ == '__main__':
-  try:
-    rospy.init_node('sbtrain', anonymous=True)
-    if args.env_name == "ContinuousTurtleGym":
-      env =  ContinuousTurtleGym()
-    elif args.env_name == "DiscreteTurtleGym" :
-      env = DiscreteTurtleGym(args.n_actions)
-    elif args.env_name == "ContinuousTurtleObsGym" :
-      env =  ContinuousTurtleObsGym()
-    elif args.env_name == "DiscreteTurtleObsGym" :
-      env = DiscreteTurtleObsGym(args.n_actions)
-    evaluate(env)
-    rospy.spin()
-  except rospy.ROSInterruptException:
-    pass
+	try:
+		rospy.init_node('evaluate', anonymous=True)
+
+		# Get Parameters for Configurations
+		state = rospy.get_param('~state', '1') # State Environtment for Training (Include: 1, 2, 3, 4, 'world')
+		algorithm = rospy.get_param('~algorithm', 'DQN') # Algorithm for Training (Include: DQN, DDPG, PPO, SAC, TD3)
+		env_name = rospy.get_param('~env_name', 'DiscreteObs') # Turtlebot Gazebo Gym Environment (Include: Continuous, Discrete, ContinuousObs, DiscreteObs)
+		n_actions = rospy.get_param('~n_actions', 'Minimum') # Number of Discrete Actions (Include: Minimum or Maximum)
+		device = rospy.get_param('~device', 'cpu') # Run on cpu or cuda (Include: cpu or cuda)
+		
+		if state == 'world':
+			state = 5
+		if env_name == "Continuous":
+			env =  ContinuousTurtleGym(state)
+		elif env_name == "Discrete":
+			env = DiscreteTurtleGym(n_actions, state)
+		elif env_name == "ContinuousObs":
+			env =  ContinuousTurtleObsGym(state)
+		elif env_name == "DiscreteObs":
+			env = DiscreteTurtleObsGym(n_actions, state)
+		
+		evaluate(env, algorithm, device, env_name)
+		
+		rospy.spin()
+	except rospy.ROSInterruptException:
+		pass

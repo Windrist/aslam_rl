@@ -142,12 +142,12 @@ def node():
 		
 #-------------------------------------------------------------------------
 		if len(id_record) > 0:
-			if len(na) > 0:
-				winner_id = revenue_record.index(max(revenue_record))
-				robots[id_record[winner_id]].sendGoal(centroid_record[winner_id])
-				time = rospy.Time.now()
-				rospy.loginfo(namespace + str(namespace_init_count + id_record[winner_id]) + " assigned to " + str(centroid_record[winner_id]))	
-				rospy.sleep(delay_after_assignement)
+			# if len(na) > 0:
+			winner_id = revenue_record.index(max(revenue_record))
+			robots[id_record[winner_id]].sendGoal(centroid_record[winner_id])
+			time = rospy.Time.now()
+			rospy.loginfo(namespace + str(namespace_init_count + id_record[winner_id]) + " assigned to " + str(centroid_record[winner_id]))	
+			rospy.sleep(delay_after_assignement)
 		else:
 			print((rospy.Time.now() - time).to_sec())
 			if (rospy.Time.now() - time).to_sec() > 10:

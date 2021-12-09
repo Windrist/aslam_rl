@@ -23,7 +23,7 @@ class robot:
         self.global_frame = rospy.get_param('~global_frame', 'map')
         self.robot_frame = rospy.get_param('~robot_frame', 'base_link')
         self.plan_service = rospy.get_param(
-            '~plan_service', '/move_base/NavfnROS/make_plan')
+            '~plan_service', '/move_base/make_plan')
         self.listener = tf.TransformListener()
         self.listener.waitForTransform(
             self.global_frame, self.name+'/'+self.robot_frame, rospy.Time(0), rospy.Duration(10.0))
@@ -102,8 +102,8 @@ def index_of_point(mapData, Xp):
     Xstarty = mapData.info.origin.position.y
     width = mapData.info.width
     Data = mapData.data
-    index = int(	(floor((Xp[1]-Xstarty)/resolution) *
-                  width)+(floor((Xp[0]-Xstartx)/resolution)))
+    index = int((floor((Xp[1]-Xstarty)/resolution) *
+                width)+(floor((Xp[0]-Xstartx)/resolution)))
     return index
 
 
@@ -130,8 +130,8 @@ def informationGain(mapData, point, r):
                 if norm(array(point)-point_of_index(mapData, i)) <= r:
                     if mapData.data[i] == -1:
                         infoGain += 1
-                    elif mapData.data[i] > 0:
-                        infoGain -= 4
+                    elif mapData.data[i] == 100:
+                        infoGain -= 10
                     
     return infoGain*(mapData.info.resolution**2)
 # ________________________________________________________________________________
@@ -152,9 +152,7 @@ def discount(mapData, assigned_pt, centroids, infoGain, r):
                     if norm(point_of_index(mapData, i)-current_pt) <= r and norm(point_of_index(mapData, i)-assigned_pt) <= r:
                         if mapData.data[i] == -1:
                             # this should be modified, subtract the area of a cell, not 1
-                            infoGain[j] -= 1
-                        elif mapData.data[i] > 0:
-                            infoGain[j] -= 4
+                            infoGain[j] -= mapData.info.resolution ** 2
 
     return infoGain
 # ________________________________________________________________________________

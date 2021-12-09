@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import rospy
 import rospkg
 from tb3env import ContinuousTurtleGym, DiscreteTurtleGym, ContinuousTurtleObsGym, DiscreteTurtleObsGym
@@ -9,10 +10,10 @@ from stable_baselines3.common.logger import configure
 
 
 # Train Function
-def train(env, algorithm, num_steps, device, old_model):
+def train(env, algorithm, num_steps, device, old_model, env_name):
 	rospack = rospkg.RosPack()
-	modelPath = rospack.get_path('aslam_rl') + '/scripts/sbmodels/' + algorithm + '_turle_1'
-	tensorlogPath = rospack.get_path('aslam_rl') + '/log/' + algorithm + '_turtle/'
+	modelPath = rospack.get_path('aslam_rl') + '/scripts/sbmodels/' + algorithm  + '_' + env_name
+	tensorlogPath = rospack.get_path('aslam_rl') + '/log/' + algorithm + '_' + env_name + '/'
 	
 	if not old_model:
 		if algorithm == "DQN":
@@ -25,7 +26,8 @@ def train(env, algorithm, num_steps, device, old_model):
 			model = SAC("MlpPolicy", env = env, device=device)
 		elif algorithm == "TD3":
 			model = TD3("MlpPolicy", env = env, device=device)
-		model.set_logger(configure(tensorlogPath + 'PPO_PreTrained', ["stdout", "csv", "log", "tensorboard", "json"]))
+
+		model.set_logger(configure(tensorlogPath + algorithm + '_PreTrained', ["stdout", "csv", "log", "tensorboard", "json"]))
 	else:
 		if algorithm == "DQN":
 			model = DQN.load(modelPath, env = env, device=device)
@@ -37,10 +39,13 @@ def train(env, algorithm, num_steps, device, old_model):
 			model = SAC.load(modelPath, env = env, device=device)
 		elif algorithm == "TD3":
 			model = TD3.load(modelPath, env = env, device=device)
-		model.set_logger(configure(tensorlogPath + 'PPO_Extended', ["stdout", "csv", "log", "tensorboard", "json"]))
+		
+		logPath = algorithm +  '_Extended_' + str(len(os.listdir(tensorlogPath)) - 1)
+		model.set_logger(configure(tensorlogPath + logPath, ["stdout", "csv", "log", "tensorboard", "json"]))
 	
 	model.learn(total_timesteps = num_steps)
 	model.save(modelPath)
+	env.stop_bot()
 	rospy.signal_shutdown('Training Completed! Shutdown ROS!')
 
 
@@ -68,7 +73,7 @@ if __name__ == '__main__':
 		elif env_name == "DiscreteObs":
 			env = DiscreteTurtleObsGym(n_actions, state)
 		
-		train(env, algorithm, num_steps, device, old_model)
+		train(env, algorithm, num_steps, device, old_model, env_name)
 		
 		rospy.spin()
 	except rospy.ROSInterruptException:

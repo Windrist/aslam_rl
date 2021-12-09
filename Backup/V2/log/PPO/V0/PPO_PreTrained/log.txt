@@ -1,0 +1,1 @@
+Logging to /home/windrist/Workspace/ThichNghi_ws/src/aslam_rl/log/PPO_turtle/PPO_PreTrained
