@@ -24,7 +24,7 @@ def evaluate(env, algorithm, device, env_name):
         model = TD3.load(modelPath, device=device)
     
     episode_rewards = []
-    for _ in range(50):
+    for _ in range(10):
         done = False
         obs = env.reset()
         ep_reward = 0

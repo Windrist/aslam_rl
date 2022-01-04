@@ -1,0 +1,15 @@
+<launch>
+    <arg name="stage" value="world"/>
+
+    <!-- Run Environment by Gazebo -->
+    <include file="$(find aslam_rl)/launch/turtlebot3_stage_$(arg stage).launch" />
+
+    <!-- Run RL Control Node -->
+    <node pkg="aslam_rl" type="evaluate.py" name="Driving" output="screen">
+        <param name="state" value="$(arg stage)"/>
+        <param name="algorithm" value="SAC"/>
+        <param name="env_name" value="ContinuousObs"/>
+        <param name="n_actions" value="Maximum"/>
+        <param name="device" value="cuda"/>
+    </node>
+</launch>

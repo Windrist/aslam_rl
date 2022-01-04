@@ -1,0 +1,3 @@
+[submodule "ADNet"]
+	path = ADNet
+	url = https://github.com/ngocquyenngo/Object-Tracking-using-ADNet-with-DRL-

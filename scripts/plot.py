@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 
 ALGORITHM = 'PPO'
 ENV_NAME = 'ContinuousObs'
+VERSION = 6
 
 rospack = rospkg.RosPack()
-logFullPath = rospack.get_path('aslam_rl') + '/Backup/V3/log/'
+logFullPath = rospack.get_path('aslam_rl') + '/Backup/V' + str(VERSION) + '/log/'
 logPath = rospack.get_path('aslam_rl') + '/log/'
 
 def moving_average(values, window):
@@ -69,7 +70,7 @@ def plot_results(log_folder, algorithm='DQN', env_name='DiscreteObs', title='Tra
 
     plt.show()
 
-def plot_all(log_folder, title='Training Result Smoothed |'):
+def plot_all(log_folder, version=5, title='Training Result Smoothed |'):
     """
     Plot All results
     :param log_folder: (str) the save location of the results to plot
@@ -80,28 +81,73 @@ def plot_all(log_folder, title='Training Result Smoothed |'):
     full_df = {'PPO': {'DiscreteObs': pd.DataFrame(), 'ContinuousObs': pd.DataFrame()},
                'DQN': {'DiscreteObs': pd.DataFrame()},
                'SAC': {'ContinuousObs': pd.DataFrame()}}
+    mini_df = {'PPO': {'ContinuousObs': pd.DataFrame()},
+               'SAC': {'ContinuousObs': pd.DataFrame()}}
 
-    for algorithm in config['algorithm']:
-        for env_name in config['env_name']:
-            if algorithm == 'DQN' and env_name == 'ContinuousObs':
-                continue
-            elif algorithm == 'SAC' and env_name == 'DiscreteObs':
-                continue
-            else:
-                temp_folder = log_folder + algorithm + '_' + env_name + '/'
-                dfp = []
-                dfp.append(pd.read_csv(temp_folder + algorithm + '_PreTrained/progress.csv'))
-                for i in range(len(os.listdir(temp_folder)) - 1):
-                    dfp.append(pd.read_csv(temp_folder + algorithm + '_Extended' + '_' + str(i) + '/progress.csv'))
+    if version == 5:
+        for algorithm in config['algorithm']:
+            for env_name in config['env_name']:
+                if algorithm == 'DQN' and env_name == 'ContinuousObs':
+                    continue
+                elif algorithm == 'SAC' and env_name == 'DiscreteObs':
+                    continue
+                elif algorithm == 'PPO':
+                    temp_folder = log_folder + algorithm + '_' + env_name + '/'
+                    df = pd.read_csv(temp_folder + algorithm + '_PreTrained/progress.csv')
+                    
+                    df = df.iloc[0:122]
+                    df['time/total_timesteps'] /= 1000
+                    df['time/total_timesteps'].astype('int')
+                    full_df[algorithm][env_name] = df
+                else:
+                    temp_folder = log_folder + algorithm + '_' + env_name + '/'
+                    dfp = []
+                    dfp.append(pd.read_csv(temp_folder + algorithm + '_PreTrained/progress.csv'))
 
-                for i in range(1, len(os.listdir(temp_folder))):
-                    dfp[i]['time/total_timesteps'] += dfp[i-1]['time/total_timesteps'].iloc[-1]
-                for i in range(len(os.listdir(temp_folder))):
-                    dfp[i]['time/total_timesteps'] /= 1000
-                    dfp[i]['time/total_timesteps'].astype('int')
-                df = pd.concat(dfp, ignore_index=True)
-                full_df[algorithm][env_name] = df
+                    for i in range(len(os.listdir(temp_folder))):
+                        dfp[i]['time/total_timesteps'] /= 1000
+                        dfp[i]['time/total_timesteps'].astype('int')
+                    df = pd.concat(dfp, ignore_index=True)
+                    full_df[algorithm][env_name] = df
+    elif version == 6:
+        for algorithm in config['algorithm']:
+            for env_name in config['env_name']:
+                if (algorithm == 'SAC' or algorithm == 'PPO') and env_name == 'ContinuousObs':
+                    temp_folder = log_folder + algorithm + '_' + env_name + '/'
+                    dfp = []
+                    # for i in range(len(os.listdir(temp_folder)) - 1):
+                    dfp.append(pd.read_csv(temp_folder + algorithm + '_Extended' + '_' + str(0) + '/progress.csv'))
 
+                    # for i in range(1, len(os.listdir(temp_folder)) - 1):
+                    #     dfp[i]['time/total_timesteps'] += dfp[i-1]['time/total_timesteps'].iloc[-1]
+                    # for i in range(len(os.listdir(temp_folder)) - 1):
+                    dfp[0] = dfp[0].iloc[0:224]
+                    dfp[0]['time/total_timesteps'] /= 1000
+                    dfp[0]['time/total_timesteps'].astype('int')
+                    df = pd.concat(dfp, ignore_index=True)
+                    mini_df[algorithm][env_name] = df
+    else:
+        for algorithm in config['algorithm']:
+            for env_name in config['env_name']:
+                if algorithm == 'DQN' and env_name == 'ContinuousObs':
+                    continue
+                elif algorithm == 'SAC' and env_name == 'DiscreteObs':
+                    continue
+                else:
+                    temp_folder = log_folder + algorithm + '_' + env_name + '/'
+                    dfp = []
+                    dfp.append(pd.read_csv(temp_folder + algorithm + '_PreTrained/progress.csv'))
+                    for i in range(len(os.listdir(temp_folder)) - 1):
+                        dfp.append(pd.read_csv(temp_folder + algorithm + '_Extended' + '_' + str(i) + '/progress.csv'))
+
+                    for i in range(1, len(os.listdir(temp_folder))):
+                        dfp[i]['time/total_timesteps'] += dfp[i-1]['time/total_timesteps'].iloc[-1]
+                    for i in range(len(os.listdir(temp_folder))):
+                        dfp[i]['time/total_timesteps'] /= 1000
+                        dfp[i]['time/total_timesteps'].astype('int')
+                    df = pd.concat(dfp, ignore_index=True)
+                    full_df[algorithm][env_name] = df
+        
     plt.figure(1)
     plt.xlabel('Number of Episodes')
     plt.ylabel('Rewards')
@@ -111,32 +157,52 @@ def plot_all(log_folder, title='Training Result Smoothed |'):
     plt.ylabel('Number of Steps to reach Goal')
     plt.title(title + ' Steps to reach Goal')
     
-    for algorithm in config['algorithm']:
-        for env_name in config['env_name']:
-            if algorithm == 'DQN' and env_name == 'ContinuousObs':
-                continue
-            elif algorithm == 'SAC' and env_name == 'DiscreteObs':
-                continue
-            else:
-                timesteps = full_df[algorithm][env_name]['time/total_timesteps'].values
-                rewards = full_df[algorithm][env_name]['rollout/ep_rew_mean'].values
-                lendrive = full_df[algorithm][env_name]['rollout/ep_len_mean'].values
+    if version == 6:
+        for algorithm in config['algorithm']:
+            for env_name in config['env_name']:
+                if (algorithm == 'SAC' or algorithm == 'PPO') and env_name == 'ContinuousObs':
+                    timesteps = mini_df[algorithm][env_name]['time/total_timesteps'].values
+                    rewards = mini_df[algorithm][env_name]['rollout/ep_rew_mean'].values
+                    lendrive = mini_df[algorithm][env_name]['rollout/ep_len_mean'].values
 
-                rewards = moving_average(rewards, window=50)
-                lendrive = moving_average(lendrive, window=50)
-                # Truncate x
-                timesteps = timesteps[len(timesteps) - len(rewards):]
-                
-                plt.figure(1)
-                plt.plot(timesteps, rewards, label=algorithm + '_' + env_name)
-                plt.legend()
-                plt.figure(2)
-                plt.plot(timesteps, lendrive, label=algorithm + '_' + env_name)
-                plt.legend()
+                    rewards = moving_average(rewards, window=5)
+                    lendrive = moving_average(lendrive, window=5)
+                    # Truncate x
+                    timesteps = timesteps[len(timesteps) - len(rewards):]
+                    
+                    plt.figure(1)
+                    plt.plot(timesteps, rewards, label=algorithm + '_' + env_name)
+                    plt.legend()
+                    plt.figure(2)
+                    plt.plot(timesteps, lendrive, label=algorithm + '_' + env_name)
+                    plt.legend()
+    else:
+        for algorithm in config['algorithm']:
+            for env_name in config['env_name']:
+                if algorithm == 'DQN' and env_name == 'ContinuousObs':
+                    continue
+                elif algorithm == 'SAC' and env_name == 'DiscreteObs':
+                    continue
+                else:
+                    timesteps = full_df[algorithm][env_name]['time/total_timesteps'].values
+                    rewards = full_df[algorithm][env_name]['rollout/ep_rew_mean'].values
+                    lendrive = full_df[algorithm][env_name]['rollout/ep_len_mean'].values
+
+                    rewards = moving_average(rewards, window=50)
+                    lendrive = moving_average(lendrive, window=50)
+                    # Truncate x
+                    timesteps = timesteps[len(timesteps) - len(rewards):]
+                    
+                    plt.figure(1)
+                    plt.plot(timesteps, rewards, label=algorithm + '_' + env_name)
+                    plt.legend()
+                    plt.figure(2)
+                    plt.plot(timesteps, lendrive, label=algorithm + '_' + env_name)
+                    plt.legend()
     
     plt.show()
 
 
 if __name__ == '__main__':
-    plot_results(logPath, ALGORITHM, ENV_NAME, title='Training Result Smoothed |')
-    # plot_all(logFullPath, title='Training Result Smoothed |')
+    # plot_results(logFullPath, ALGORITHM, ENV_NAME, title='Training Result Smoothed |')
+    plot_all(logFullPath, version=VERSION, title='Training Result Smoothed |')

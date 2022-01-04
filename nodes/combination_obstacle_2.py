@@ -111,7 +111,7 @@ class Combination():
                             state = 0
 
                     self.pub_model.publish(obstacle_2)
-                    time.sleep(0.2)
+            time.sleep(0.2)
 
 def main():
     rospy.init_node('combination_obstacle_2')

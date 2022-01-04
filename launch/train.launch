@@ -7,10 +7,10 @@
     <!-- Implement Train Node for Training -->
     <node pkg="aslam_rl" type="training.py" name="Learning" output="screen">
         <param name="state" value="$(arg stage)"/>
-        <param name="algorithm" value="PPO"/>
+        <param name="algorithm" value="SAC"/>
         <param name="env_name" value="ContinuousObs"/>
         <param name="n_actions" value="Maximum"/>
-        <param name="num_steps" value="400000"/>
+        <param name="num_steps" value="100000"/>
         <param name="device" value="cuda"/>
         <param name="old_model" value="True"/>
     </node>

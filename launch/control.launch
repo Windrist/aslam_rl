@@ -2,6 +2,7 @@
     <!-- Run RL Control Node -->
     <node pkg="aslam_rl" type="control.py" name="Driving" output="screen">
         <param name="algorithm" value="PPO"/>
-        <param name="device" value="cpu"/>
+        <param name="env_name" value="ContinuousObs"/>
+        <param name="device" value="cuda"/>
     </node>
 </launch>

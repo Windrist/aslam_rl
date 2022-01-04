@@ -67,7 +67,7 @@ class robot:
         robot.goal.target_pose.pose.position.x = point[0]
         robot.goal.target_pose.pose.position.y = point[1]
         robot.goal.target_pose.pose.orientation.w = 1.0
-        self.client.send_goal(robot.goal)
+        # self.client.send_goal(robot.goal)
         self.goalPub.publish(robot.goal)
 
         self.assigned_point = array(point)
@@ -130,8 +130,8 @@ def informationGain(mapData, point, r):
                 if norm(array(point)-point_of_index(mapData, i)) <= r:
                     if mapData.data[i] == -1:
                         infoGain += 1
-                    elif mapData.data[i] == 100:
-                        infoGain -= 10
+                    elif mapData.data[i] > 0:
+                        infoGain -= mapData.data[i] / 10
                     
     return infoGain*(mapData.info.resolution**2)
 # ________________________________________________________________________________
